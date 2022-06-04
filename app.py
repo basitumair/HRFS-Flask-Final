@@ -5,6 +5,8 @@
 #pip install fuzzywuzzy
 import nltk
 nltk.download('punkt')
+nltk.download('maxent_ne_chunker')
+nltk.download('words')
 #spacy
 import spacy
 # from spacy.pipeline import EntityRuler
@@ -33,6 +35,7 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 nltk.download(['stopwords','wordnet'])
+
 
 #warning
 import warnings
@@ -88,13 +91,36 @@ from EntitiesExtraction_module2 import *
 import EntitiesExtraction_module2 as mod2
 reload(mod1)
 reload(mod2)
+#read model libraries
+import gensim
+from gensim import corpora
+#Visualization
+from spacy import displacy
+import pyLDAvis.gensim_models
+# from wordcloud import WordCloud
+import plotly.express as px
+
 #read dataset
 # city.head()
 uni=pd.DataFrame(pd.read_csv("world_universities.csv"))
 # print(uni.head())
 country=pd.DataFrame(pd.read_excel("cities500.xlsx"))
 city=pd.DataFrame(pd.read_excel("cities500.xlsx"))
+#import ranking datasets
+df = pd.read_csv("Resume.csv")
+df = df.reindex(np.random.permutation(df.index))
+data = df.copy().iloc[
+    0:200,
+]
+data.head()
 
+import spacy
+nlp = spacy.load("en_core_web_lg")
+skill_pattern_path = "jz_skill_patterns.jsonl"
+
+ruler = nlp.add_pipe("entity_ruler")
+ruler.from_disk(skill_pattern_path)
+nlp.pipe_names
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -124,6 +150,17 @@ def read_resume():
     request_data = request.get_json()
     urls = request_data['Urls']
     skills = request_data['Skills']
+    country_desired = request_data['DesiredCountries']
+
+
+
+    required_skills_list=skills.lower().split(",")
+    print(f"{required_skills_list}")
+    nationalaity_preference=country_desired
+    print(f"@@@@@@@@@@@@{nationalaity_preference}")
+
+
+
     # -------------------------------------------------------------------------------------------------------------
     def read_files(urls):
         # -------------------------------------------------------------------------------------------------------------
@@ -171,6 +208,18 @@ def read_resume():
            print("exception---", ex)
            return json.dumps(ex)
 
+    def get_skills(text):
+        doc = nlp(text)
+        myset = []
+        subset = []
+        for ent in doc.ents:
+            if ent.label_ == "SKILL":
+                subset.append(ent.text)
+        myset.append(subset)
+        return subset
+
+    def unique_skills(x):
+        return list(set(x))
 
     try:
         dir = 'resume/'
@@ -194,24 +243,19 @@ def read_resume():
             result['Email'][a] = list(dict.fromkeys(result['Email'][a]))
             result['URLS'][a] = list(dict.fromkeys(result['URLS'][a]))
 
+            input_resume = resumes[a]
 
+            resume_skills = unique_skills(get_skills(input_resume.lower()))
+            score = 0
+            for x in required_skills_list:
+                if x in resume_skills:
+                    score += 1
+            req_skills_len = len(required_skills_list)
+            match = round(score / req_skills_len * 100, 1)
+            print(f"The current Resume is {match}% matched to your requirements")
+            result['Skill'][a] = resume_skills
+            result['Similarity'][a] = match
 
-        length1 = len(result)
-        result2 = mod2.best_Match_resume(data, skills_list)
-        #     length2=len(result2)
-        #     result['Date']=""
-        #     result['Summary']=""
-        #     result['NewSkills']=""
-        #     result['match_Item']=""
-        #     result['match_Item_Count']=""
-        #     result['Date']=result2['Date']
-        #     result['Summary']=result2['summary']
-        #     result['NewSkills']=result2['NewSkills']
-        #     result['match_Item']=result2['match_Item']
-        #     result['match_Item_Count']=result2['match_Item_Count']
-        print(result)
-        #     print(result2)
-        #     result3=result.merge(result2, how='left')
         result = result.to_json()
 
     #     result3=result2.to_json()
