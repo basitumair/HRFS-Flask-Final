@@ -59,7 +59,7 @@ nlp = spacy.load("en_core_web_sm")
 
 
 #Create the EntityRuler
-# ruler = nlp.add_pipe("entity_ruler")
+ruler = nlp.add_pipe("entity_ruler")
 
 from flask import Flask, redirect, url_for, request, render_template,make_response, send_file,jsonify
 from json2html import *
@@ -115,10 +115,12 @@ data = df.copy().iloc[
 data.head()
 
 import spacy
-
+nlp = spacy.load("en_core_web_lg")
 skill_pattern_path = "jz_skill_patterns.jsonl"
 
-
+ruler = nlp.add_pipe("entity_ruler")
+ruler.from_disk(skill_pattern_path)
+nlp.pipe_names
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -150,15 +152,8 @@ def read_resume():
     skills = request_data['Skills']
     country_desired = request_data['DesiredCountries']
 
-    try:
-        spacy.cli.download("en_core_web_lg")
-        nlp = spacy.load("en_core_web_lg")
-    except:  # If not present, we download
-        nlp = spacy.load("en_core_web_lg")
 
-    ruler = nlp.add_pipe("entity_ruler")
-    ruler.from_disk(skill_pattern_path)
-    nlp.pipe_names
+
     required_skills_list=skills.lower().split(",")
     print(f"{required_skills_list}")
     nationalaity_preference=country_desired
