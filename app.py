@@ -59,7 +59,7 @@ nlp = spacy.load("en_core_web_sm")
 
 
 #Create the EntityRuler
-ruler = nlp.add_pipe("entity_ruler")
+# ruler = nlp.add_pipe("entity_ruler")
 
 from flask import Flask, redirect, url_for, request, render_template,make_response, send_file,jsonify
 from json2html import *
@@ -118,9 +118,7 @@ import spacy
 
 skill_pattern_path = "jz_skill_patterns.jsonl"
 
-ruler = nlp.add_pipe("entity_ruler")
-ruler.from_disk(skill_pattern_path)
-nlp.pipe_names
+
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -154,6 +152,9 @@ def read_resume():
 
     try:
         nlp = spacy.load("en_core_web_lg")
+        ruler = nlp.add_pipe("entity_ruler")
+        ruler.from_disk(skill_pattern_path)
+        nlp.pipe_names
     except:  # If not present, we download
         spacy.cli.download("en_core_web_lg")
 
