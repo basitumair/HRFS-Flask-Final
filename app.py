@@ -151,13 +151,14 @@ def read_resume():
     country_desired = request_data['DesiredCountries']
 
     try:
-        nlp = spacy.load("en_core_web_lg")
-        ruler = nlp.add_pipe("entity_ruler")
-        ruler.from_disk(skill_pattern_path)
-        nlp.pipe_names
-    except:  # If not present, we download
         spacy.cli.download("en_core_web_lg")
+        nlp = spacy.load("en_core_web_lg")
+    except:  # If not present, we download
+        nlp = spacy.load("en_core_web_lg")
 
+    ruler = nlp.add_pipe("entity_ruler")
+    ruler.from_disk(skill_pattern_path)
+    nlp.pipe_names
     required_skills_list=skills.lower().split(",")
     print(f"{required_skills_list}")
     nationalaity_preference=country_desired
