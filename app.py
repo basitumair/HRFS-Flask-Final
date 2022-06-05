@@ -115,7 +115,7 @@ data = df.copy().iloc[
 data.head()
 
 import spacy
-nlp = spacy.load("en_core_web_lg")
+
 skill_pattern_path = "jz_skill_patterns.jsonl"
 
 ruler = nlp.add_pipe("entity_ruler")
@@ -152,7 +152,10 @@ def read_resume():
     skills = request_data['Skills']
     country_desired = request_data['DesiredCountries']
 
-
+    try:
+        nlp = spacy.load("en_core_web_lg")
+    except:  # If not present, we download
+        spacy.cli.download("en_core_web_lg")
 
     required_skills_list=skills.lower().split(",")
     print(f"{required_skills_list}")
