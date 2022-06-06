@@ -258,7 +258,7 @@ def read_resume():
             print(f"The current Resume is {match}% matched to your requirements")
             result['Skill'][a] = resume_skills
             result['Similarity'][a] = match
-            result['Resume_Url'][a]= str(resumes_url[a])
+            result['Resume_Url'][a]= resumes_url[a]
 
         result = result.to_json()
 
