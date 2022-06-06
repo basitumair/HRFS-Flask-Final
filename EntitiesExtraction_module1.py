@@ -182,6 +182,6 @@ def module_1_entities(data, uni_df, country_df, city_df):
         # new_data2=new_data2.append({'Name':Name,'City':city,'Location':location,'University':uni,'Contact':cont,'Email':email,'URLS':urls}, ignore_index=True)
         new_data2 = new_data2.append(
             {'Name': Name, 'City': city, 'Location': location, 'University': uni, 'Contact': cont, 'Email': email,
-             'URLS': urls, 'Skill': "", 'Similarity': ""}, ignore_index=True)
+             'URLS': urls, 'Skill': "", 'Similarity': "",'Resume_Url':""}, ignore_index=True)
 
     return new_data2

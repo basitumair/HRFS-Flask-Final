@@ -171,10 +171,12 @@ def read_resume():
         # urls = urls.replace('{', '')
         # urls = urls.replace('}', '')
         try:
+            files_path=[]
             urls = urls.split(",")
             print(urls)
             for url in urls:
                 f = urlopen(url=url)
+                files_path.append(url)
                 print("---Actual Url---", url)
                 print("---url----", f)
                 if f != " ":
@@ -203,7 +205,7 @@ def read_resume():
                     #         file.endswith('.docx'):
                     resumes.append(text)
 
-            return resumes
+            return resumes,files_path
         except Exception as ex:
            print("exception---", ex)
            return json.dumps(ex)
@@ -231,7 +233,7 @@ def read_resume():
         skills_list = skills
         skills_list = skills_list.split(",")
         # ................................................................................
-        resumes = read_files(urls)
+        resumes,resumes_url = read_files(urls)
         data = pd.DataFrame(list(resumes), columns=['Resumes'])
         result = mod1.module_1_entities(data, uni, country, city)
 
@@ -255,6 +257,7 @@ def read_resume():
             print(f"The current Resume is {match}% matched to your requirements")
             result['Skill'][a] = resume_skills
             result['Similarity'][a] = match
+            result['Resume_Url'][a]= str(resumes_url[a])
 
         result = result.to_json()
 
