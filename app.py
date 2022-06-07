@@ -175,6 +175,9 @@ def read_resume():
             files_path=[]
             urls = urls.split(",")
             print(urls)
+            main_url=urls[0]
+            small_url=main_url.split("/")
+            main_url=small_url[0]+"//"+small_url[2]+"/"+small_url[3]
             for url in urls:
                 f = urlopen(url=url)
                 
@@ -200,6 +203,8 @@ def read_resume():
                 print("file for resume list---", file)
                 file_name=str(file)
                 file_name=file_name.replace("\\", "")
+                file_name=file_name.split("/")
+                file_name=main_url+"/"+file_name[1]
                 files_path.append(file_name)
                 if file.endswith('.pdf'):
                     resumes.append(extract_text_from_pdf(file))
