@@ -177,7 +177,7 @@ def read_resume():
             print(urls)
             for url in urls:
                 f = urlopen(url=url)
-                files_path.append(url)
+                
                 print("---Actual Url---", url)
                 print("---url----", f)
                 if f != " ":
@@ -198,6 +198,9 @@ def read_resume():
             #         print(os.chdir("*"))
             for file in glob.glob('resume' + '/*'):
                 print("file for resume list---", file)
+                file_name=str(file)
+                file_name=file_name.replace("\\", "")
+                files_path.append(file)
                 if file.endswith('.pdf'):
                     resumes.append(extract_text_from_pdf(file))
 
