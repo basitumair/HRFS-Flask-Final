@@ -200,7 +200,7 @@ def read_resume():
                 print("file for resume list---", file)
                 file_name=str(file)
                 file_name=file_name.replace("\\", "")
-                files_path.append(file)
+                files_path.append(file_name)
                 if file.endswith('.pdf'):
                     resumes.append(extract_text_from_pdf(file))
 
