@@ -149,10 +149,13 @@ def get_example():
 @app.route('/Resume_segmentation', methods=['POST'])
 def read_resume():
     request_data = request.get_json()
+    print(f"Rewuest Receibed is {request_data}")
     urls = request_data['Urls']
     skills = request_data['Skills']
     country_desired = request_data['DesiredCountries']
-
+    #####
+    t_s= skills.split(",")
+    print(f"length of skills is {t_s}")
 
 
     required_skills_list=skills.lower().split(",")
@@ -213,6 +216,8 @@ def read_resume():
                     text = dtxt.process(file)
                     #         file.endswith('.docx'):
                     resumes.append(text)
+                    
+           
 
             return resumes,files_path
         except Exception as ex:
@@ -275,7 +280,7 @@ def read_resume():
     #     result3=HTML(df.to_html(classes='table table-stripped'))
 
     #     json_data = jsonify(trails=result),{'Content-Type':'application/json'}
-
+        print(f"Result is: {result}")
         return result
     except Exception as ex:
         print("exception main ---", ex)
